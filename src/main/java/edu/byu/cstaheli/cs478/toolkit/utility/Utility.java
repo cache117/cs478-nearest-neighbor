@@ -1,4 +1,4 @@
-package edu.byu.cstaheli.cs478.decision_tree.util;
+package edu.byu.cstaheli.cs478.toolkit.utility;
 
 import java.util.Arrays;
 import java.util.List;
@@ -18,5 +18,10 @@ public class Utility
         return newRow.stream()
                 .mapToDouble(i -> i)
                 .toArray();
+    }
+    
+    public static double square(double value)
+    {
+        return value * value;
     }
 }

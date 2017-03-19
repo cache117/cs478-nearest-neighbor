@@ -36,48 +36,11 @@ public class MLSystemManager
         ml.run(args);
     }
 
-    /**
-     * When you make a new learning algorithm, you should add a line for it to this method.
-     */
-    public SupervisedLearner getLearner(String model, Random rand) throws Exception
-    {
-        switch (model)
-        {
-            case "baseline":
-                return new BaselineLearner();
-            case "perceptron":
-                return new Perceptron(rand);
-            case "backpropagation":
-                return new BackPropagation(rand);
-            case "decisiontree":
-                return new DecisionTree();
-//            case "knn":
-//                return new InstanceBasedLearner();
-            default:
-                throw new Exception("Unrecognized model: " + model);
-        }
-    }
-
-    public SupervisedLearner getLearner()
-    {
-        return learner;
-    }
-
-    public void setLearner(SupervisedLearner learner)
-    {
-        this.learner = learner;
-    }
-
     public void run(String[] args) throws Exception
     {
         //Parse the command line arguments
         ArgParser parser = new ArgParser(args);
         determineEvalMethod(parser);
-    }
-
-    public void setRandomSeed(long seed)
-    {
-        setRandom(new Random(seed));
     }
 
     private void determineEvalMethod(ArgParser parser) throws Exception
@@ -92,7 +55,7 @@ public class MLSystemManager
         Matrix arffData = new Matrix();
         if (binRealData)
         {
-            arffData.setBinRealValues(true);
+            arffData.doBinRealValues();
         }
         arffData.loadArff(parser.getARFF());
         if (parser.isNormalized())
@@ -118,6 +81,28 @@ public class MLSystemManager
             case "cross":
                 calcCrossValidation(learner, learnerData);
                 break;
+        }
+    }
+    
+    /**
+     * When you make a new learning algorithm, you should add a line for it to this method.
+     */
+    public SupervisedLearner getLearner(String model, Random rand) throws Exception
+    {
+        switch (model)
+        {
+            case "baseline":
+                return new BaselineLearner();
+            case "perceptron":
+                return new Perceptron(rand);
+            case "backpropagation":
+                return new BackPropagation(rand);
+            case "decisiontree":
+                return new DecisionTree();
+//            case "knn":
+//                return new InstanceBasedLearner();
+            default:
+                throw new Exception("Unrecognized model: " + model);
         }
     }
 
@@ -269,6 +254,21 @@ public class MLSystemManager
     private void setRandom(Random random)
     {
         this.random = random;
+    }
+    
+    public SupervisedLearner getLearner()
+    {
+        return learner;
+    }
+    
+    public void setLearner(SupervisedLearner learner)
+    {
+        this.learner = learner;
+    }
+    
+    public void setRandomSeed(long seed)
+    {
+        setRandom(new Random(seed));
     }
 
     private String getArrayString(double[] array)

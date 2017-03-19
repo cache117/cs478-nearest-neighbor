@@ -1,8 +1,8 @@
 package edu.byu.cstaheli.cs478.decision_tree.node;
 
 import edu.byu.cstaheli.cs478.decision_tree.DecisionTree;
-import edu.byu.cstaheli.cs478.decision_tree.util.Utility;
 import edu.byu.cstaheli.cs478.toolkit.strategy.LearningStrategy;
+import edu.byu.cstaheli.cs478.toolkit.utility.Utility;
 
 import java.util.*;
 
@@ -63,6 +63,28 @@ public class FeatureNode extends Node
         }
         return 1 + maxDepth;
     }
+    
+    public Node getChild(int index)
+    {
+        return children.get(index);
+    }
+    
+    public Node findChildWithPrimaryColumnValue(double primaryColumnValue)
+    {
+        for (Node node : children)
+        {
+            if (Double.compare(node.getPrimaryColumnValue(), primaryColumnValue) == 0)
+            {
+                return node;
+            }
+        }
+        return null;
+    }
+    
+    protected int getNumberOfChildren()
+    {
+        return children.size();
+    }
 
     public void tryPruning(LearningStrategy strategy, DecisionTree tree) throws Exception
     {
@@ -97,11 +119,6 @@ public class FeatureNode extends Node
         return splitAttributeName;
     }
 
-    public Node getChild(int index)
-    {
-        return children.get(index);
-    }
-
     public List<Node> getChildren()
     {
         return Collections.unmodifiableList(children);
@@ -110,23 +127,6 @@ public class FeatureNode extends Node
     public void setChildren(List<Node> children)
     {
         this.children = children;
-    }
-
-    public Node findChildWithPrimaryColumnValue(double primaryColumnValue)
-    {
-        for (Node node : children)
-        {
-            if (Double.compare(node.getPrimaryColumnValue(), primaryColumnValue) == 0)
-            {
-                return node;
-            }
-        }
-        return null;
-    }
-
-    protected int getNumberOfChildren()
-    {
-        return children.size();
     }
 
     public int getNumberOfDescendants()
