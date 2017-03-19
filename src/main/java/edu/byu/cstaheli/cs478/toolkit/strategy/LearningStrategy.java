@@ -10,10 +10,12 @@ public abstract class LearningStrategy
 {
     private final static double TRAINING_PERCENT = .8;
     private LearnerData learnerData;
+    private boolean useValidationSet;
     
     public LearningStrategy(LearnerData learnerData) throws Exception
     {
         this.learnerData = learnerData;
+        this.useValidationSet = true;
     }
     
     public Matrix getTrainingFeatures()
@@ -84,6 +86,23 @@ public abstract class LearningStrategy
     
     protected int getValidationSetSize()
     {
-        return (int) (getTrainSize() * (1 - getTrainPercent()));
+        if (isUsingValidationSet())
+        {
+            return (int) (getTrainSize() * (1 - getTrainPercent()));
+        }
+        else
+        {
+            return 0;
+        }
+    }
+    
+    public boolean isUsingValidationSet()
+    {
+        return useValidationSet;
+    }
+    
+    public void setUseValidationSet(boolean useValidationSet)
+    {
+        this.useValidationSet = useValidationSet;
     }
 }

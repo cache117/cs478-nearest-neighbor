@@ -12,34 +12,36 @@ public class TrainingStrategy extends LearningStrategy
     {
         super(learnerData);
     }
-
+    
     @Override
     public Matrix getTrainingData()
     {
-        return new Matrix(getArffData(), 0, 0, getTrainingSetSize(), getArffData().cols());
+        if (isUsingValidationSet())
+        {
+            return new Matrix(getArffData(), 0, 0, getTrainingSetSize(), getArffData().cols());
+        }
+        else
+        {
+            return new Matrix(getArffData());
+        }
     }
-
+    
     @Override
     public Matrix getTestingData()
     {
         return new Matrix(getArffData(), 0, 0, getTrainSize(), getArffData().cols());
     }
-
-    @Override
-    public Matrix getTestingFeatures()
-    {
-        return getTrainingFeatures();
-    }
-
-    @Override
-    public Matrix getTestingLabels()
-    {
-        return getTrainingLabels();
-    }
-
+    
     @Override
     public Matrix getValidationData()
     {
-        return new Matrix(getArffData(), getTrainingSetSize(), 0, getValidationSetSize(), getArffData().cols());
+        if (isUsingValidationSet())
+        {
+            return new Matrix(getArffData(), getTrainingSetSize(), 0, getValidationSetSize(), getArffData().cols());
+        }
+        else
+        {
+            return new Matrix();
+        }
     }
 }

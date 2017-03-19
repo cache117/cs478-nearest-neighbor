@@ -16,7 +16,6 @@ public class CrossValidationStrategy extends LearningStrategy
     public CrossValidationStrategy(LearnerData learnerData) throws Exception
     {
         this(learnerData, 0, 0);
-
     }
 
     public CrossValidationStrategy(LearnerData learnerData, int begin, int end) throws Exception
@@ -37,7 +36,14 @@ public class CrossValidationStrategy extends LearningStrategy
     @Override
     public Matrix getTrainingData()
     {
-        return new Matrix(trainingData, 0, 0, getTrainingSetSize() - 1, trainingData.cols());
+        if (isUsingValidationSet())
+        {
+            return new Matrix(trainingData, 0, 0, getTrainingSetSize() - 1, trainingData.cols());
+        }
+        else
+        {
+            return trainingData;
+        }
     }
 
     @Override
@@ -49,7 +55,14 @@ public class CrossValidationStrategy extends LearningStrategy
     @Override
     public Matrix getValidationData()
     {
-        return new Matrix(trainingData, getTrainingSetSize(), 0, getValidationSetSize() - 1, trainingData.cols());
+        if (isUsingValidationSet())
+        {
+            return new Matrix(trainingData, getTrainingSetSize(), 0, getValidationSetSize() - 1, trainingData.cols());
+        }
+        else
+        {
+            return new Matrix();
+        }
     }
 
     @Override

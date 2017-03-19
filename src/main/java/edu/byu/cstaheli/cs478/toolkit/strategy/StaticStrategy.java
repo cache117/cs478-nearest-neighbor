@@ -25,7 +25,14 @@ public class StaticStrategy extends LearningStrategy
     @Override
     public Matrix getTrainingData()
     {
-        return new Matrix(getArffData(), 0, 0, getTrainingSetSize(), getArffData().cols());
+        if (isUsingValidationSet())
+        {
+            return new Matrix(getArffData(), 0, 0, getTrainingSetSize(), getArffData().cols());
+        }
+        else
+        {
+            return new Matrix(getArffData());
+        }
     }
 
     @Override
@@ -37,6 +44,13 @@ public class StaticStrategy extends LearningStrategy
     @Override
     public Matrix getValidationData()
     {
-        return new Matrix(getArffData(), getTrainingSetSize(), 0, getValidationSetSize(), getArffData().cols());
+        if (isUsingValidationSet())
+        {
+            return new Matrix(getArffData(), getTrainingSetSize(), 0, getValidationSetSize(), getArffData().cols());
+        }
+        else
+        {
+            return new Matrix();
+        }
     }
 }

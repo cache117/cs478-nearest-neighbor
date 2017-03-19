@@ -32,7 +32,21 @@ public class RandomStrategy extends LearningStrategy
 
     private Matrix getInitialTrainingData()
     {
-        return new Matrix(getArffData(), 0, 0, getTrainingSetSize(), getArffData().cols());
+        if (isUsingValidationSet())
+        {
+            return new Matrix(getArffData(), 0, 0, getTrainingSetSize(), getArffData().cols());
+        }
+        else
+        {
+            return new Matrix(getArffData());
+        }
+    }
+    
+    @Override
+    public Matrix getTrainingFeatures()
+    {
+        shouldShuffle = true;
+        return super.getTrainingFeatures();
     }
 
     @Override
@@ -47,13 +61,6 @@ public class RandomStrategy extends LearningStrategy
     }
 
     @Override
-    public Matrix getTrainingFeatures()
-    {
-        shouldShuffle = true;
-        return super.getTrainingFeatures();
-    }
-
-    @Override
     public Matrix getTestingData()
     {
         return new Matrix(getArffData(), getTrainSize(), 0, getArffData().rows() - getTrainSize(), getArffData().cols());
@@ -62,7 +69,14 @@ public class RandomStrategy extends LearningStrategy
     @Override
     public Matrix getValidationData()
     {
-        return new Matrix(getArffData(), getTrainingSetSize(), 0, getValidationSetSize(), getArffData().cols());
+        if (isUsingValidationSet())
+        {
+            return new Matrix(getArffData(), getTrainingSetSize(), 0, getValidationSetSize(), getArffData().cols());
+        }
+        else
+        {
+            return new Matrix();
+        }
     }
 
     protected double getTrainPercent()
