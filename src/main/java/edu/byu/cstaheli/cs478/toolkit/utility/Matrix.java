@@ -24,7 +24,7 @@ public class Matrix
     /**
      * Representation of missing values in the dataset
      */
-    private static double MISSING = Double.MAX_VALUE;
+    public static double MISSING = Double.MAX_VALUE;
     
     // Data
     private List<double[]> m_data;

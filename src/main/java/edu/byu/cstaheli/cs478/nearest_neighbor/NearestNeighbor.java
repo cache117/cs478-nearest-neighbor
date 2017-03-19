@@ -31,33 +31,61 @@ public class NearestNeighbor extends SupervisedLearner
     @Override
     public void predict(double[] features, double[] labels) throws Exception
     {
-    
-    }
-    
-    protected double euclideanDistance(double[] x, double[] y)
-    {
-        assert x.length == y.length;
-        double distance = 0;
-        for (int i = 0; i < x.length; ++i)
+        NearestNeighbors nearestNeighbors = new NearestNeighbors(numberOfNeighborsToCompareTo);
+        for (int i = 0; i < trainingData.rows(); ++i)
         {
-            distance += distance(x[i], y[i]);
+            double[] row = trainingData.row(i);
+            double distance = distance(row, features);
+            nearestNeighbors.addPotential(row, distance);
         }
-        return Math.sqrt(distance);
+        labels[0] = nearestNeighbors.predict();
     }
     
-    private double distance(double first, double second)
+    private double distance(double[] first, double[] second) throws MatrixException
+    {
+        assert first.length == second.length;
+        double distance = 0;
+        for (int i = 0; i < first.length; ++i)
+        {
+            distance += distance(i, first[i], second[i]);
+        }
+        return distance;
+    }
+    
+    private double distance(int column, double firstValue, double secondValue) throws MatrixException
+    {
+        if (new Double(firstValue).equals(Matrix.MISSING) || new Double(secondValue).equals(Matrix.MISSING))
+        {
+            return 1;
+        }
+        if (trainingData.valueCount(column) == 0)
+        {
+            return euclideanDistance(firstValue, secondValue);
+        }
+        else
+        {
+            return valueDistanceMetric(column, firstValue, secondValue);
+        }
+    }
+    
+    protected double euclideanDistance(double x, double y)
+    {
+        return Math.sqrt(squaredDistance(x, y));
+    }
+    
+    private double squaredDistance(double first, double second)
     {
         return square(first - second);
     }
     
-    protected double getValueDistanceMetric(int firstColumn, double firstValue, int secondColumn, double secondValue) throws MatrixException
+    protected double valueDistanceMetric(int column, double firstValue, double secondValue) throws MatrixException
     {
         double valueDistanceMetric = 0;
         Map<Double, Integer> outputOccurrences = trainingData.getColumnOccurrences(trainingData.cols() - 1);
-        Matrix hasFirstValue = trainingData.getRowsWithColumnClass(firstColumn, firstValue);
+        Matrix hasFirstValue = trainingData.getRowsWithColumnClass(column, firstValue);
         //# Times attribute a had value x
         double nax = hasFirstValue.rows();
-        Matrix hasSecondValue = trainingData.getRowsWithColumnClass(secondColumn, secondValue);
+        Matrix hasSecondValue = trainingData.getRowsWithColumnClass(column, secondValue);
         //# Times attribute a had value y
         double nay = hasSecondValue.rows();
         for (Map.Entry<Double, Integer> entry : outputOccurrences.entrySet())
@@ -68,10 +96,13 @@ public class NearestNeighbor extends SupervisedLearner
             Matrix hasSecondAndOutput = hasSecondValue.getRowsWithColumnClass(hasSecondValue.cols() - 1, entry.getKey());
             //# times attribute a=y and class was c
             double nayc = hasSecondAndOutput.rows();
-            valueDistanceMetric += distance(naxc / nax, nayc / nay);
+            double paxc = naxc / nax;
+            double payc = nayc / nay;
+            valueDistanceMetric += squaredDistance(paxc, payc);
         }
         return valueDistanceMetric;
     }
+    
     
     public int getNumberOfNeighborsToCompareTo()
     {
