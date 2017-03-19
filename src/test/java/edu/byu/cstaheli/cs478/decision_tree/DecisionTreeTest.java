@@ -9,27 +9,18 @@ import java.io.File;
 import java.util.Map;
 import java.util.TreeMap;
 
+import static edu.byu.cstaheli.cs478.other.Other.assertNumberBetween;
+import static edu.byu.cstaheli.cs478.other.Other.assertNumbersEqualWithEpsilon;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Created by cstaheli on 3/1/2017.
  */
-class DecisionTreeTest
+public class DecisionTreeTest
 {
     private static String datasetsLocation = "src/test/resources/datasets/decision_tree/";
-
-    private static void assertNumberBetween(double number, double lowerBound, double upperBound)
-    {
-        assertTrue(Double.compare(number, lowerBound) != -1 && Double.compare(number, upperBound) != 1, String.format("Actual: %s. Expected Bounds[%s, %s].", number, lowerBound, upperBound));
-        //assertTrue(number >= lowerBound && number <= upperBound, String.format("Actual: %s. Expected Bounds[%s, %s].", number, lowerBound, upperBound));
-    }
-
-    private static void assertNumbersEqualWithEpsilon(double expected, double actual, double epsilon)
-    {
-        assertNumberBetween(actual, expected - epsilon, expected + epsilon);
-    }
-
+    
     @Test
     void getFeatureNode() throws Exception
     {
@@ -40,33 +31,32 @@ class DecisionTreeTest
         assertEquals(0, splitOn);
         double primaryColumnValue = featureNode.getPrimaryColumnValue();
         assertEquals(0, primaryColumnValue);
-
+    
         Matrix noMeatMatrix = matrix.getRowsWithColumnClass(0, 0.0);
         featureNode = (FeatureNode) tree.getFeatureNode(noMeatMatrix);
         splitOn = featureNode.getSplitColumn();
         assertEquals(1, splitOn);
-
+    
         Matrix yesMeatMatrix = matrix.getRowsWithColumnClass(0, 0.0);
         featureNode = (FeatureNode) tree.getFeatureNode(yesMeatMatrix);
         splitOn = featureNode.getSplitColumn();
         assertEquals(1, splitOn);
-
     }
-
+    
     @Test
     void getNodeChildren() throws Exception
     {
         Matrix matrix = new Matrix(datasetsLocation + "pizza.arff");
         DecisionTree tree = new DecisionTree();
     }
-
+    
     @Test
     void getLeafNodeIfAny() throws Exception
     {
         Matrix matrix = new Matrix(datasetsLocation + "pizza.arff");
         DecisionTree tree = new DecisionTree();
     }
-
+    
     @Test
     void getMostProbable() throws Exception
     {
@@ -84,7 +74,7 @@ class DecisionTreeTest
         mostProbable = tree.getMostProbable(outputDistribution);
         assertEquals(4.0, mostProbable);
     }
-
+    
     @Test
     void getPureClassIfAny() throws Exception
     {
@@ -95,7 +85,7 @@ class DecisionTreeTest
         DecisionTree tree = new DecisionTree();
         Map.Entry<Double, Integer> pureClassIfAny = tree.getPureClassIfAny(outputDistribution);
         assertEquals(null, pureClassIfAny);
-
+    
         outputDistribution = new TreeMap<>();
         outputDistribution.put(0.0, 0);
         outputDistribution.put(1.0, 0);
@@ -103,7 +93,7 @@ class DecisionTreeTest
         pureClassIfAny = tree.getPureClassIfAny(outputDistribution);
         assertEquals(2.0, (double) pureClassIfAny.getKey());
     }
-
+    
     @Test
     void getBestFeature() throws Exception
     {
@@ -116,7 +106,7 @@ class DecisionTreeTest
         assertEquals(1, bestFeature);
         Matrix veggieMatrix = matrix.getRowsWithColumnClass(1, 0);
     }
-
+    
     @Test
     void calculateOutputInformation() throws Exception
     {
@@ -125,7 +115,7 @@ class DecisionTreeTest
         double outputInformation = tree.calculateOutputInformation(matrix);
         assertNumberBetween(outputInformation, 1.530, 1.531);
     }
-
+    
     @Test
     void calculateFeatureInformation() throws Exception
     {
@@ -144,7 +134,7 @@ class DecisionTreeTest
         featureInformation = tree.calculateFeatureInformation(meatMatrix, 1);
         assertNumbersEqualWithEpsilon(0, featureInformation, .1);
     }
-
+    
     @Test
     void runManager() throws Exception
     {
@@ -170,7 +160,16 @@ class DecisionTreeTest
 //        runVotingTestPruning();
         runIris();
     }
-
+    
+    private void runIris() throws Exception
+    {
+        String[] args;
+        MLSystemManager manager = new MLSystemManager();
+        manager.binRealData(true);
+        args = ("-L decisiontree -A " + datasetsLocation + "iris.arff -E training -V").split(" ");
+        manager.run(args);
+    }
+    
     private void runCarsTestNoPruning() throws Exception
     {
         String[] args;
@@ -185,7 +184,7 @@ class DecisionTreeTest
             manager.run(args);
         }
     }
-
+    
     private void runCarsTestPruning() throws Exception
     {
         String[] args;
@@ -201,7 +200,7 @@ class DecisionTreeTest
             manager.run(args);
         }
     }
-
+    
     private void runVotingTestNoPruning() throws Exception
     {
         String[] args;
@@ -216,7 +215,7 @@ class DecisionTreeTest
             manager.run(args);
         }
     }
-
+    
     private void runVotingTestPruning() throws Exception
     {
         String[] args;
@@ -231,14 +230,5 @@ class DecisionTreeTest
             args = ("-L decisiontree -A " + datasetsLocation + "voting.arff -E cross 10 -V").split(" ");
             manager.run(args);
         }
-    }
-
-    private void runIris() throws Exception
-    {
-        String[] args;
-        MLSystemManager manager = new MLSystemManager();
-        manager.binRealData(true);
-        args = ("-L decisiontree -A " + datasetsLocation + "iris.arff -E training -V").split(" ");
-        manager.run(args);
     }
 }

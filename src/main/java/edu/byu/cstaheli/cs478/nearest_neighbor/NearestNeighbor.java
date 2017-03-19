@@ -16,22 +16,27 @@ public class NearestNeighbor extends SupervisedLearner
 {
     private int numberOfNeighborsToCompareTo;
     private Matrix trainingData;
+    private boolean useDistanceWeighting;
     
     public NearestNeighbor()
     {
-        this.numberOfNeighborsToCompareTo = 0;
+        this.numberOfNeighborsToCompareTo = 3;
+        useDistanceWeighting = false;
     }
     
     @Override
     public void train(LearningStrategy strategy) throws Exception
     {
+        //Allows data to be shuffled if needed
+//        strategy.getTrainingFeatures();
+//        strategy.getTrainingLabels();
         trainingData = strategy.getTrainingData();
     }
     
     @Override
     public void predict(double[] features, double[] labels) throws Exception
     {
-        NearestNeighbors nearestNeighbors = new NearestNeighbors(numberOfNeighborsToCompareTo);
+        NearestNeighbors nearestNeighbors = new NearestNeighbors(numberOfNeighborsToCompareTo, useDistanceWeighting);
         for (int i = 0; i < trainingData.rows(); ++i)
         {
             double[] row = trainingData.row(i);
@@ -41,18 +46,29 @@ public class NearestNeighbor extends SupervisedLearner
         labels[0] = nearestNeighbors.predict();
     }
     
-    private double distance(double[] first, double[] second) throws MatrixException
+    /**
+     * Returns the distance between the two vectors. Note that the existing row <i>can</i> include it's output class,
+     * but doesn't need to. The sizes of the two input vectors must either be the same, or else the existing row must
+     * have one more element.
+     *
+     * @param existingRow   a row from the existing training data.
+     * @param predictionRow the new row to compare to.
+     * @return the distance between the two vectors
+     * @throws MatrixException if any features are nominal and the matrix doesn't line up with the given rows.
+     */
+    protected double distance(double[] existingRow, double[] predictionRow) throws MatrixException
     {
-        assert first.length == second.length;
+        // Existing row should have 1 more column (the output)
+        assert existingRow.length == predictionRow.length + 1 || existingRow.length == predictionRow.length;
         double distance = 0;
-        for (int i = 0; i < first.length; ++i)
+        for (int i = 0; i < predictionRow.length; ++i)
         {
-            distance += distance(i, first[i], second[i]);
+            distance += distance(i, existingRow[i], predictionRow[i]);
         }
         return distance;
     }
     
-    private double distance(int column, double firstValue, double secondValue) throws MatrixException
+    protected double distance(int column, double firstValue, double secondValue) throws MatrixException
     {
         if (new Double(firstValue).equals(Matrix.MISSING) || new Double(secondValue).equals(Matrix.MISSING))
         {
@@ -68,12 +84,12 @@ public class NearestNeighbor extends SupervisedLearner
         }
     }
     
-    protected double euclideanDistance(double x, double y)
+    protected static double euclideanDistance(double x, double y)
     {
         return Math.sqrt(squaredDistance(x, y));
     }
     
-    private double squaredDistance(double first, double second)
+    protected static double squaredDistance(double first, double second)
     {
         return square(first - second);
     }
@@ -122,5 +138,15 @@ public class NearestNeighbor extends SupervisedLearner
     public void setTrainingData(Matrix trainingData)
     {
         this.trainingData = trainingData;
+    }
+    
+    public boolean isUsingDistanceWeighting()
+    {
+        return useDistanceWeighting;
+    }
+    
+    public void setUseDistanceWeighting(boolean useDistanceWeighting)
+    {
+        this.useDistanceWeighting = useDistanceWeighting;
     }
 }

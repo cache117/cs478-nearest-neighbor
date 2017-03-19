@@ -13,17 +13,19 @@ public class NearestNeighbors
 {
     private int size;
     private Map<double[], Double> neighbors;
+    private boolean useDistanceWeighting;
     
-    public NearestNeighbors(int size)
+    public NearestNeighbors(int size, boolean useDistanceWeighting)
     {
         this.size = size;
         neighbors = new HashMap<>(size);
+        this.useDistanceWeighting = useDistanceWeighting;
     }
     
     public void addPotential(double[] row, double distance)
     {
         boolean add = false;
-        if (neighbors.size() > size)
+        if (neighbors.size() < size)
         {
             add = true;
         }
@@ -56,5 +58,15 @@ public class NearestNeighbors
     private double getDistanceWeight(double distance)
     {
         return 1d / square(distance);
+    }
+    
+    public boolean isUseDistanceWeighting()
+    {
+        return useDistanceWeighting;
+    }
+    
+    public void setUseDistanceWeighting(boolean useDistanceWeighting)
+    {
+        this.useDistanceWeighting = useDistanceWeighting;
     }
 }

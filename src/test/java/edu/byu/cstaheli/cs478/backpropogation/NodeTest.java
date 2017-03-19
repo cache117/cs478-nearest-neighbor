@@ -5,18 +5,14 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.List;
 
+import static edu.byu.cstaheli.cs478.other.Other.assertNumberBetween;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Created by cstaheli on 2/16/2017.
  */
-class NodeTest
+public class NodeTest
 {
-    private static void assertNumberBetween(double number, double lowerBound, double upperBound)
-    {
-        assertTrue(number >= lowerBound && number <= upperBound, String.format("Actual: %s. Expected Bounds[%s, %s].", number, lowerBound, upperBound));
-    }
 
     @Test
     void testHardCodedProcess()

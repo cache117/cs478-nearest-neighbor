@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import static edu.byu.cstaheli.cs478.other.Other.assertNumberBetween;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -16,11 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 class BackPropagationTest
 {
-    private static void assertNumberBetween(double number, double lowerBound, double upperBound)
-    {
-        assertTrue(number >= lowerBound && number <= upperBound, String.format("Actual: %s. Expected Bounds[%s, %s].", number, lowerBound, upperBound));
-    }
-
+    
     @Test
     public void testBackPropagation() throws Exception
     {
@@ -47,7 +44,7 @@ class BackPropagationTest
 //        testNumberOfHiddenNodes();
 //        testMomentumDifferences();
     }
-
+    
     private void testIrisDataSet() throws Exception
     {
         BackPropagation backPropagation = new BackPropagation(new Random(1234));
@@ -60,7 +57,7 @@ class BackPropagationTest
         args = ("-L backpropagation -A " + datasetsLocation + "iris.arff -E random .75").split(" ");
         manager.run(args);
     }
-
+    
     private void testDifferentLearningRates() throws Exception
     {
         MLSystemManager manager = new MLSystemManager();
@@ -117,7 +114,7 @@ class BackPropagationTest
             manager.run(args);
         }
     }
-
+    
     private void testNumberOfHiddenNodes() throws Exception
     {
         MLSystemManager manager = new MLSystemManager();
@@ -238,7 +235,7 @@ class BackPropagationTest
             manager.run(args);
         }
     }
-
+    
     private void testMomentumDifferences() throws Exception
     {
         MLSystemManager manager = new MLSystemManager();
@@ -246,7 +243,7 @@ class BackPropagationTest
         String datasetsLocation = "src/test/resources/datasets/";
         BackPropagation backPropagation;
         String[] args;
-
+    
         assertTrue((new File(outputLocation + "vowels0Momentum.csv").delete()));
         for (int i = 0; i < 5; ++i)
         {
@@ -367,15 +364,15 @@ class BackPropagationTest
             manager.run(args);
         }
     }
-
+    
     @Test
     public void testAnalyzeInputRow() throws Exception
     {
         List<Node> hiddenNodes = getHiddenNodes(getInputWeights());
         List<Node> outputNodes = getOutputNodes(getInputWeights());
-
+    
         BackPropagation backPropagation = buildTestBackProp(hiddenNodes, outputNodes);
-
+    
         double[] row = new double[2];
         row[0] = 0;
         row[1] = 0;
@@ -391,12 +388,12 @@ class BackPropagationTest
         assertNumberBetween(weight, 1.00415, 1.00416);
         weight = node.getBiasWeight();
         assertNumberBetween(weight, 1.00568, 1.00569);
-
+    
         hiddenNodes = getHiddenNodes(getInputWeights());
         outputNodes = getOutputNodes(getInputWeights());
-
+    
         backPropagation = buildTestBackProp(hiddenNodes, outputNodes);
-
+    
         row = new double[2];
         row[0] = 0;
         row[1] = 1;
@@ -412,13 +409,13 @@ class BackPropagationTest
 //        assertNumberBetween(weight, 1.00415, 1.00416);
 //        weight = node.getBiasWeight();
 //        assertNumberBetween(weight, 1.00568, 1.00569);
-
+    
         //Real test
         hiddenNodes = getHiddenNodes(getInputWeights());
         outputNodes = getOutputNodes(getInputWeights());
-
+    
         backPropagation = buildTestBackProp(hiddenNodes, outputNodes);
-
+    
         row = new double[2];
         row[0] = 0;
         row[1] = 0;
@@ -434,7 +431,7 @@ class BackPropagationTest
         assertNumberBetween(weight, 1.00415, 1.00416);
         weight = node.getBiasWeight();
         assertNumberBetween(weight, 1.00568, 1.00569);
-
+    
         row = new double[2];
         row[0] = 0;
         row[1] = 1;
@@ -450,9 +447,9 @@ class BackPropagationTest
         assertNumberBetween(weight, 1.00415, 1.00416);
         weight = node.getBiasWeight();
         assertNumberBetween(weight, 1.00568, 1.00569);
-
+    
     }
-
+    
     private BackPropagation buildTestBackProp(List<Node> hiddenNodes, List<Node> outputNodes)
     {
         BackPropagation backPropagation;
@@ -462,14 +459,14 @@ class BackPropagationTest
         backPropagation.setLearningRate(1);
         return backPropagation;
     }
-
+    
     private List<Node> getOutputNodes(List<InputWeight> inputWeights)
     {
         List<Node> outputNodes = new ArrayList<>(1);
         outputNodes.add(new Node(inputWeights, 1));
         return outputNodes;
     }
-
+    
     private List<Node> getHiddenNodes(List<InputWeight> inputWeights)
     {
         List<Node> hiddenNodes = new ArrayList<>(2);
@@ -480,7 +477,7 @@ class BackPropagationTest
         }
         return hiddenNodes;
     }
-
+    
     private List<InputWeight> getInputWeights()
     {
         List<InputWeight> inputWeights = new ArrayList<>(3);

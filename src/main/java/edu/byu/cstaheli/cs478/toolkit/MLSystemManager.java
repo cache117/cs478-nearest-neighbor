@@ -8,6 +8,7 @@ package edu.byu.cstaheli.cs478.toolkit;
 import edu.byu.cstaheli.cs478.backpropogation.BackPropagation;
 import edu.byu.cstaheli.cs478.baseline.BaselineLearner;
 import edu.byu.cstaheli.cs478.decision_tree.DecisionTree;
+import edu.byu.cstaheli.cs478.nearest_neighbor.NearestNeighbor;
 import edu.byu.cstaheli.cs478.perceptron.Perceptron;
 import edu.byu.cstaheli.cs478.toolkit.learner.EpochLearner;
 import edu.byu.cstaheli.cs478.toolkit.learner.LearnerData;
@@ -99,8 +100,8 @@ public class MLSystemManager
                 return new BackPropagation(rand);
             case "decisiontree":
                 return new DecisionTree();
-//            case "knn":
-//                return new InstanceBasedLearner();
+            case "knn":
+                return new NearestNeighbor();
             default:
                 throw new Exception("Unrecognized model: " + model);
         }

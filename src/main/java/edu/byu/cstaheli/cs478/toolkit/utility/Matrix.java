@@ -396,7 +396,7 @@ public class Matrix
      * @param standardDeviation the standard deviation for the column
      * @return the z score
      */
-    private double zScore(double value, double mean, double standardDeviation)
+    private static double zScore(double value, double mean, double standardDeviation)
     {
         return (value - mean) / standardDeviation;
     }
@@ -764,8 +764,7 @@ public class Matrix
         for (int i = 0; i < m_attr_name.size(); i++)
         {
             builder.append("@ATTRIBUTE ")
-                   .append(m_attr_name.get(i))
-                   .append("\n");
+                   .append(m_attr_name.get(i));
             int values = valueCount(i);
             if (values == 0)
             {
