@@ -36,4 +36,9 @@ public class Utility
                           LinkedHashMap::new
                   ));
     }
+    
+    public static double getOutputFromRow(double[] row)
+    {
+        return row[row.length - 1];
+    }
 }

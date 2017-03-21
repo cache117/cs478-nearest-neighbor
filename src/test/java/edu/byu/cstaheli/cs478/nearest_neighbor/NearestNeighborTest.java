@@ -71,29 +71,10 @@ class NearestNeighborTest
 //        manager.setCalcTrainingAccuracy(false);
 //        manager.run(args);
         double startTime = System.currentTimeMillis();
-//        testMagicTelescopeKTerms();
-        testHousingPriceKTerms();
+        testMagicTelescopeKTerms();
+//        testHousingPriceKTerms();
         double elapsedTime = System.currentTimeMillis() - startTime;
         System.out.println("Time to complete (in seconds): " + elapsedTime / 1000.0);
-    }
-    
-    private void testHousingPriceKTerms() throws Exception
-    {
-        String[] args;
-        MLSystemManager manager = new MLSystemManager();
-        args = ("-L knn -A " + datasetsLocation + "housingTraining.arff -E static " + datasetsLocation + "housingTesting.arff -N").split(" ");
-        NearestNeighbor nearestNeighbor = new NearestNeighbor();
-        nearestNeighbor.setUseDistanceWeighting(false);
-        nearestNeighbor.setUseRegression(true);
-        nearestNeighbor.setOutputFile(datasetsLocation + "housingPrice/kTest.csv");
-        assertTrue(new File(datasetsLocation + "housingPrice/kTest.csv").delete());
-        for (int i = 1; i < 16; i += 2)
-        {
-            System.out.println("Running with K = " + i);
-            nearestNeighbor.setNumberOfNeighborsToCompareTo(i);
-            manager.setLearner(nearestNeighbor);
-            manager.run(args);
-        }
     }
     
     private void testMagicTelescopeKTerms() throws Exception
@@ -102,10 +83,15 @@ class NearestNeighborTest
         MLSystemManager manager = new MLSystemManager();
         args = ("-L knn -A " + datasetsLocation + "magicTelescopeTraining.arff -E static " + datasetsLocation + "magicTelescopeTesting.arff -N -V").split(" ");
         NearestNeighbor nearestNeighbor = new NearestNeighbor();
-        nearestNeighbor.setUseDistanceWeighting(false);
+        nearestNeighbor.setUseDistanceWeighting(true);
         nearestNeighbor.setUseRegression(false);
         nearestNeighbor.setOutputFile(datasetsLocation + "magicTelescope/kTest.csv");
         assertTrue(new File(datasetsLocation + "magicTelescope/kTest.csv").delete());
+        testKValues(args, manager, nearestNeighbor);
+    }
+    
+    private void testKValues(String[] args, MLSystemManager manager, NearestNeighbor nearestNeighbor) throws Exception
+    {
         for (int i = 1; i < 16; i += 2)
         {
             System.out.println("Running with K = " + i);
@@ -113,5 +99,30 @@ class NearestNeighborTest
             manager.setLearner(nearestNeighbor);
             manager.run(args);
         }
+    }
+    
+    private void testHousingPriceKTerms() throws Exception
+    {
+        String[] args;
+        MLSystemManager manager = new MLSystemManager();
+        args = ("-L knn -A " + datasetsLocation + "housingTraining.arff -E static " + datasetsLocation + "housingTesting.arff -N").split(" ");
+        NearestNeighbor nearestNeighbor = new NearestNeighbor();
+        nearestNeighbor.setUseDistanceWeighting(true);
+        nearestNeighbor.setUseRegression(true);
+        nearestNeighbor.setOutputFile(datasetsLocation + "housingPrice/kTest.csv");
+        assertTrue(new File(datasetsLocation + "housingPrice/kTest.csv").delete());
+        testKValues(args, manager, nearestNeighbor);
+    }
+    
+    private void testNominal()
+    {
+        String[] args;
+        MLSystemManager manager = new MLSystemManager();
+        args = ("-L knn -A " + datasetsLocation + "credit.arff -E random -N -V").split(" ");
+        NearestNeighbor nearestNeighbor = new NearestNeighbor();
+        nearestNeighbor.setUseDistanceWeighting(true);
+        nearestNeighbor.setUseRegression(false);
+        nearestNeighbor.setOutputFile(datasetsLocation + "magicTelescope/kTest.csv");
+        assertTrue(new File(datasetsLocation + "magicTelescope/kTest.csv").delete());
     }
 }

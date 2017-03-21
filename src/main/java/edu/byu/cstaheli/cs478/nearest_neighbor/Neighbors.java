@@ -5,8 +5,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
-import static edu.byu.cstaheli.cs478.toolkit.utility.Utility.sortMapByValue;
-import static edu.byu.cstaheli.cs478.toolkit.utility.Utility.square;
+import static edu.byu.cstaheli.cs478.toolkit.utility.Utility.*;
 
 /**
  * Created by cstaheli on 3/18/2017.
@@ -80,7 +79,7 @@ public class Neighbors
                 timesToAdd += weightingFactor;
                 for (int i = 0; i < weightingFactor; ++i)
                 {
-                    sum += entry.getValue();
+                    sum += getOutputFromRow(entry.getKey());
                 }
             }
             return sum / (double) timesToAdd;
@@ -89,7 +88,7 @@ public class Neighbors
         {
             for (Map.Entry<double[], Double> entry : neighbors.entrySet())
             {
-                sum += entry.getValue();
+                sum += getOutputFromRow(entry.getKey());
             }
             return sum / (double) size;
         }
@@ -142,11 +141,6 @@ public class Neighbors
             }
         }
         return occurrences;
-    }
-    
-    private double getOutputFromRow(double[] row)
-    {
-        return row[row.length - 1];
     }
     
     private double getDistanceWeight(double distance)
