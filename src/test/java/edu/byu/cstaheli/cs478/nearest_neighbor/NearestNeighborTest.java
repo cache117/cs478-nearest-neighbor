@@ -71,10 +71,28 @@ class NearestNeighborTest
 //        manager.setCalcTrainingAccuracy(false);
 //        manager.run(args);
         double startTime = System.currentTimeMillis();
-        testMagicTelescopeKTerms();
+//        testMagicTelescopeKTerms();
 //        testHousingPriceKTerms();
+//        testNominal();
+        testExperiment();
         double elapsedTime = System.currentTimeMillis() - startTime;
         System.out.println("Time to complete (in seconds): " + elapsedTime / 1000.0);
+    }
+    
+    private void testExperiment() throws Exception
+    {
+        String[] args;
+        MLSystemManager manager = new MLSystemManager();
+        args = ("-L knn -A " + datasetsLocation + "magicTelescopeTraining.arff -E static " + datasetsLocation + "magicTelescopeTesting.arff -N -V").split(" ");
+        NearestNeighbor nearestNeighbor = new NearestNeighbor();
+        nearestNeighbor.setUseDistanceWeighting(true);
+        nearestNeighbor.setUseRegression(false);
+        nearestNeighbor.setOutputFile(datasetsLocation + "magicTelescope/experiment.csv");
+        assertTrue(new File(datasetsLocation + "magicTelescope/experiment.csv").delete());
+        System.out.println("Running with K = " + 3);
+        nearestNeighbor.setNumberOfNeighborsToCompareTo(3);
+        manager.setLearner(nearestNeighbor);
+        manager.run(args);
     }
     
     private void testMagicTelescopeKTerms() throws Exception
@@ -114,15 +132,22 @@ class NearestNeighborTest
         testKValues(args, manager, nearestNeighbor);
     }
     
-    private void testNominal()
+    private void testNominal() throws Exception
     {
         String[] args;
         MLSystemManager manager = new MLSystemManager();
-        args = ("-L knn -A " + datasetsLocation + "credit.arff -E random -N -V").split(" ");
+        args = ("-L knn -A " + datasetsLocation + "credit.arff -E random .85 -N -V").split(" ");
         NearestNeighbor nearestNeighbor = new NearestNeighbor();
         nearestNeighbor.setUseDistanceWeighting(true);
         nearestNeighbor.setUseRegression(false);
-        nearestNeighbor.setOutputFile(datasetsLocation + "magicTelescope/kTest.csv");
-        assertTrue(new File(datasetsLocation + "magicTelescope/kTest.csv").delete());
+        nearestNeighbor.setOutputFile(datasetsLocation + "credit/test.csv");
+//        assertTrue(new File(datasetsLocation + "credit/test.csv").delete());
+    
+        nearestNeighbor.setNumberOfNeighborsToCompareTo(3);
+        manager.setLearner(nearestNeighbor);
+        manager.run(args);
+//        nearestNeighbor.setNumberOfNeighborsToCompareTo(7);
+//        manager.setLearner(nearestNeighbor);
+//        manager.run(args);
     }
 }

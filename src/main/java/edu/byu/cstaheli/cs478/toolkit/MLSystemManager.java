@@ -181,10 +181,17 @@ public class MLSystemManager
         learner.train(strategy);
         double elapsedTime = System.currentTimeMillis() - startTime;
         System.out.println("Time to train (in seconds): " + elapsedTime / 1000.0);
-        double trainAccuracy = learner.measureAccuracy(strategy.getTrainingFeatures(), strategy.getTrainingLabels(), null);
-        System.out.println("Training set accuracy: " + trainAccuracy);
+        double trainAccuracy = 0;
+        if (calcTrainingAccuracy)
+        {
+            trainAccuracy = learner.measureAccuracy(strategy.getTrainingFeatures(), strategy.getTrainingLabels(), null);
+            System.out.println("Training set accuracy: " + trainAccuracy);
+        }
         Matrix confusion = new Matrix();
+        startTime = System.currentTimeMillis();
         double testAccuracy = learner.measureAccuracy(testFeatures, testLabels, confusion);
+        elapsedTime = System.currentTimeMillis() - startTime;
+        System.out.println("Time to test (in seconds): " + elapsedTime / 1000.0);
         System.out.println("Test set accuracy: " + testAccuracy);
         if (learnerData.isVerbose())
         {
@@ -199,6 +206,10 @@ public class MLSystemManager
         if (learner instanceof EpochLearner)
         {
             System.out.println("Total number of epochs: " + ((EpochLearner) learner).getTotalEpochs());
+        }
+        if (learner instanceof NearestNeighbor)
+        {
+            ((NearestNeighbor) learner).outputFinalStatistics(testAccuracy);
         }
     }
 
