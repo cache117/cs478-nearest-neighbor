@@ -5,6 +5,7 @@ import edu.byu.cstaheli.cs478.toolkit.learner.SupervisedLearner;
 import edu.byu.cstaheli.cs478.toolkit.strategy.LearningStrategy;
 import edu.byu.cstaheli.cs478.toolkit.utility.Matrix;
 
+import java.io.FileWriter;
 import java.util.Map;
 
 import static edu.byu.cstaheli.cs478.toolkit.utility.Utility.square;
@@ -17,6 +18,7 @@ public class NearestNeighbor extends SupervisedLearner
     private int numberOfNeighborsToCompareTo;
     private Matrix trainingData;
     private boolean useDistanceWeighting;
+    private boolean useRegression;
     
     public NearestNeighbor()
     {
@@ -27,6 +29,7 @@ public class NearestNeighbor extends SupervisedLearner
     @Override
     public void train(LearningStrategy strategy) throws Exception
     {
+        strategy.setUseValidationSet(false);
         //Allows data to be shuffled if needed
 //        strategy.getTrainingFeatures();
 //        strategy.getTrainingLabels();
@@ -36,14 +39,14 @@ public class NearestNeighbor extends SupervisedLearner
     @Override
     public void predict(double[] features, double[] labels) throws Exception
     {
-        NearestNeighbors nearestNeighbors = new NearestNeighbors(numberOfNeighborsToCompareTo, useDistanceWeighting);
+        Neighbors neighbors = new Neighbors(numberOfNeighborsToCompareTo, useDistanceWeighting, useRegression);
         for (int i = 0; i < trainingData.rows(); ++i)
         {
             double[] row = trainingData.row(i);
             double distance = distance(row, features);
-            nearestNeighbors.addPotential(row, distance);
+            neighbors.addPotential(row, distance);
         }
-        labels[0] = nearestNeighbors.predict();
+        labels[0] = neighbors.predict();
     }
     
     /**
@@ -80,7 +83,14 @@ public class NearestNeighbor extends SupervisedLearner
         }
         else
         {
-            return valueDistanceMetric(column, firstValue, secondValue);
+            if (trainingData.valueCount(trainingData.cols() - 1) != 0)
+            {
+                return valueDistanceMetric(column, firstValue, secondValue);
+            }
+            else
+            {
+                return euclideanDistance(firstValue, secondValue);
+            }
         }
     }
     
@@ -148,5 +158,30 @@ public class NearestNeighbor extends SupervisedLearner
     public void setUseDistanceWeighting(boolean useDistanceWeighting)
     {
         this.useDistanceWeighting = useDistanceWeighting;
+    }
+    
+    public void outputFinalStatistics(double testingAccuracy)
+    {
+        if (shouldOutput())
+        {
+            try (FileWriter writer = new FileWriter(getOutputFile(), true))
+            {
+                writer.append(String.format("%s, %s\n", numberOfNeighborsToCompareTo, testingAccuracy));
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+        }
+    }
+    
+    public boolean isUseRegression()
+    {
+        return useRegression;
+    }
+    
+    public void setUseRegression(boolean useRegression)
+    {
+        this.useRegression = useRegression;
     }
 }

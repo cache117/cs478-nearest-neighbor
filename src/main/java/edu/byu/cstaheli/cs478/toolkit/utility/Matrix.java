@@ -34,7 +34,6 @@ public class Matrix
     private List<Map<String, Integer>> m_str_to_enum;
     private List<Map<Integer, String>> m_enum_to_str;
     private String datasetName;
-    
     private boolean binRealValues;
     
     /**
@@ -481,6 +480,16 @@ public class Matrix
     public String attrName(int column)
     {
         return m_attr_name.get(column);
+    }
+    
+    public String getDatasetName()
+    {
+        return datasetName;
+    }
+    
+    public void setDatasetName(String datasetName)
+    {
+        this.datasetName = datasetName;
     }
     
     /**

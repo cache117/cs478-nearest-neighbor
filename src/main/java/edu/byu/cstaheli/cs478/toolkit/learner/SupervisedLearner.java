@@ -15,16 +15,6 @@ public abstract class SupervisedLearner
     {
     }
 
-    protected String getOutputFile()
-    {
-        return outputFile;
-    }
-
-    public void setOutputFile(String outputFile)
-    {
-        this.outputFile = outputFile;
-    }
-
     public abstract void train(LearningStrategy strategy) throws Exception;
 
     protected double getBestAccuracy(double newValue, double previousBest)
@@ -35,11 +25,6 @@ public abstract class SupervisedLearner
         }
         return previousBest;
     }
-
-    // A feature vector goes in. A label vector comes out. (Some supervised
-    // learning algorithms only support one-dimensional label vectors. Some
-    // support multi-dimensional label vectors.)
-    public abstract void predict(double[] features, double[] labels) throws Exception;
 
     // The model must be trained before you call this method. If the label is nominal,
     // it returns the predictive accuracy. If the label is continuous, it returns
@@ -77,6 +62,7 @@ public abstract class SupervisedLearner
             if (confusion != null)
             {
                 confusion.setSize(labelValues, labelValues);
+                confusion.setDatasetName(features.getDatasetName());
                 for (int i = 0; i < labelValues; i++)
                     confusion.setAttrName(i, labels.attrValue(0, i));
             }
@@ -98,6 +84,11 @@ public abstract class SupervisedLearner
             return (double) correctCount / features.rows();
         }
     }
+    
+    // A feature vector goes in. A label vector comes out. (Some supervised
+    // learning algorithms only support one-dimensional label vectors. Some
+    // support multi-dimensional label vectors.)
+    public abstract void predict(double[] features, double[] labels) throws Exception;
 
     protected double calcMeanSquaredError(Matrix features, Matrix labels) throws Exception
     {
@@ -123,5 +114,15 @@ public abstract class SupervisedLearner
     protected boolean shouldOutput()
     {
         return (getOutputFile() != null);
+    }
+    
+    protected String getOutputFile()
+    {
+        return outputFile;
+    }
+    
+    public void setOutputFile(String outputFile)
+    {
+        this.outputFile = outputFile;
     }
 }
